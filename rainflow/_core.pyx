@@ -1,7 +1,9 @@
 # cython: language_level=3
 # cython: cdivision=True
+from cpython cimport array
+import array
 
-# todo 返回的子谱用ndarray能不能提速？
+# todo 返回的子谱用ndarray能不能提速？ 别让他调用PyFloat_FromDouble，从double变到PyFloatObject还得变回double太傻了
 cpdef inline tuple path(double[::1] spectrum):
     """def path(spectrum: numpy.ndarray) -> tuple
     
@@ -12,12 +14,12 @@ cpdef inline tuple path(double[::1] spectrum):
         int i, temp
         int current_index=1 # 当前雨滴到哪了
     # 雨流计数后 留下没有流经的地方 这里面可不是索引
-    sub_spectrums = []  # type: list[list[float]]
+    sub_spectrums = []  # type: list[array]
     path = [0, 1]  # 以索引表示当前雨流的路径 必然经过0, 1
     while current_index!= <int>spectrum.shape[0]-1:   # 没落到底
         for i in range(current_index, <int>(spectrum.shape[0]-1)):
             if spectrum[i]<spectrum[current_index]<spectrum[i+1] or spectrum[i]>spectrum[current_index]>spectrum[i+1]:  # 下落的地方找到了
-                current_sub_spectrum = []  # 路径跳跃了 必然有地方没有经过 这些节点将加入当前子谱
+                current_sub_spectrum = array.array("d", [])  # 路径跳跃了 必然有地方没有经过 这些节点将加入当前子谱
                 for temp in range(current_index, i+1):
                     current_sub_spectrum.append(spectrum[temp])
                 current_sub_spectrum.append(spectrum[current_index])  # 使子谱闭合

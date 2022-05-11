@@ -30,10 +30,12 @@ class TestRain(TestCase):
         spec = np.array([400, -200, 100, -300, 0, -200, 400], float)
         ret = path(spec)
         self.assertEqual(ret[0], [0, 1, 3, 4, 6])
-        self.assertEqual(ret[1], [[-200, 100, -200], [0, -200, 0]])
+        self.assertEqual(list(ret[1][0]), [-200, 100, -200])
+        self.assertEqual(list(ret[1][1]), [0, -200, 0])
 
     def test_sub3(self):
         spec = np.array([400.5, -200, 100, -300, 0, -200.5, 400.5], float)
         ret = path(spec)
         self.assertEqual(ret[0], [0, 1, 3, 4, 6])
-        self.assertEqual(ret[1], [[-200, 100, -200], [0, -200.5, 0]])
+        self.assertEqual(list(ret[1][0]), [-200, 100, -200])
+        self.assertEqual(list(ret[1][1]), [0, -200.5, 0])
